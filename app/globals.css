@@ -1,0 +1,130 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-heading: var(--font-playfair);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/*
+ * Paleta de marca Clinica Cygnus: crema calido + rosa empolvado + slate.
+ * Un unico tema (claro) — ver plan: "alto impacto visual" via composicion,
+ * tipografia editorial y animacion, no via modo oscuro.
+ */
+:root {
+  --background: #f4f0eb;
+  --foreground: #424547;
+  --card: #fbfaf8;
+  --card-foreground: #424547;
+  --popover: #ffffff;
+  --popover-foreground: #424547;
+  --primary: #b37e7f;
+  --primary-foreground: #fdf9f8;
+  --secondary: #efe7df;
+  --secondary-foreground: #424547;
+  --muted: #ede6de;
+  --muted-foreground: #8a8481;
+  --accent: #f4e4e4;
+  --accent-foreground: #7a4344;
+  --destructive: #b5533f;
+  --destructive-foreground: #fdf9f8;
+  --border: #e6dad3;
+  --input: #e6dad3;
+  --ring: #d29d9e;
+  --success: #7f9471;
+  --success-foreground: #fdfaf6;
+  --warning: #c79a3d;
+  --warning-foreground: #3a2e10;
+  --info: #8c7fa6;
+  --info-foreground: #fdfaf6;
+  --chart-1: #d29d9e;
+  --chart-2: #8fa37e;
+  --chart-3: #cba135;
+  --chart-4: #8c7fa6;
+  --chart-5: #7a7573;
+  --radius: 0.75rem;
+  --sidebar: #fffdfc;
+  --sidebar-foreground: #424547;
+  --sidebar-primary: #b37e7f;
+  --sidebar-primary-foreground: #fdf9f8;
+  --sidebar-accent: #f4e4e4;
+  --sidebar-accent-foreground: #7a4344;
+  --sidebar-border: #ece2da;
+  --sidebar-ring: #d29d9e;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+  }
+}
+
+@layer utilities {
+  .font-heading {
+    font-family: var(--font-heading);
+  }
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}

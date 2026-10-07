@@ -1,7 +1,7 @@
 import type { RowDataPacket } from "mysql2/promise";
 import { assertRole, requireProfile } from "@/lib/auth";
 import { query, queryOne } from "@/lib/db";
-import { dayBounds, formatClinicTime, todayInClinic } from "@/lib/dates";
+import { dayBounds, formatClinicShortDate, formatClinicTime, todayInClinic } from "@/lib/dates";
 import { formatCLP } from "@/lib/format";
 import { Card } from "@/components/ui/card";
 import { CashPanel } from "./_components/cash-panel";
@@ -22,15 +22,18 @@ export default async function CajaPage() {
 
   const [pending, products, totalsRows, paymentsToday] = await Promise.all([
     query<PendingDb>(
+      // Incluye también citas de días anteriores que quedaron sin cobrar (no solo las de hoy),
+      // para poder cobrarle a alguien que vino y no pagó en su momento. Las futuras no se cobran antes de atenderse.
       `SELECT a.id, a.start_at, p.full_name AS patient_name, s.name AS service_name, s.base_price, s.pricing_type
          FROM appointments a
          LEFT JOIN patients p ON p.id = a.patient_id
          LEFT JOIN services s ON s.id = a.service_id
-        WHERE a.clinic_id = ? AND a.app_type = 'appointment' AND a.start_at >= ? AND a.start_at < ?
+        WHERE a.clinic_id = ? AND a.app_type = 'appointment' AND a.start_at < ?
           AND a.status NOT IN ('cancelled','no_show')
           AND NOT EXISTS (SELECT 1 FROM payments py WHERE py.appointment_id = a.id AND py.status = 'completed')
-        ORDER BY a.start_at`,
-      [profile.clinicId, start, end],
+        ORDER BY a.start_at ASC
+        LIMIT 100`,
+      [profile.clinicId, end],
     ),
     query<ProductDb>("SELECT id, name, price, stock FROM products WHERE clinic_id = ? AND active = 1 ORDER BY name", [profile.clinicId]),
     register
@@ -77,7 +80,7 @@ export default async function CajaPage() {
         <Card className="p-5">
           <p className="text-sm text-muted-foreground">Pendientes de cobro</p>
           <p className="mt-2 font-heading text-3xl font-semibold tabular-nums">{pending.length}</p>
-          <p className="text-xs text-muted-foreground">Citas de hoy sin pago</p>
+          <p className="text-xs text-muted-foreground">De hoy y atrasadas</p>
         </Card>
       </div>
 
@@ -86,13 +89,16 @@ export default async function CajaPage() {
         openingAmount={register ? Number(register.opening_amount) : 0}
         expectedCash={cashExpected}
         isAdmin={profile.role === "admin"}
-        pending={pending.map((p) => ({
-          id: p.id,
-          time: formatClinicTime(p.start_at),
-          patient: p.patient_name ?? "Sin paciente",
-          service: p.service_name ?? "—",
-          suggestedAmount: p.pricing_type === "fixed" ? Number(p.base_price) : 0,
-        }))}
+        pending={pending.map((p) => {
+          const isToday = p.start_at >= start && p.start_at < end;
+          return {
+            id: p.id,
+            time: isToday ? formatClinicTime(p.start_at) : `${formatClinicShortDate(p.start_at)} ${formatClinicTime(p.start_at)}`,
+            patient: p.patient_name ?? "Sin paciente",
+            service: p.service_name ?? "—",
+            suggestedAmount: p.pricing_type === "fixed" ? Number(p.base_price) : 0,
+          };
+        })}
         products={products.map((p) => ({ id: p.id, name: p.name, price: Number(p.price), stock: Number(p.stock) }))}
         payments={paymentsToday.map((p) => ({
           id: p.id,

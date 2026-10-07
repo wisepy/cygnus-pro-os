@@ -26,3 +26,8 @@ export function formatClinicTime(date: Date): string {
 export function formatClinicDate(date: Date): string {
   return formatInTimeZone(date, CLINIC_TZ, "dd-MM-yyyy");
 }
+
+/** Fecha corta (dd-MM) para distinguir citas de otros días en listas de hoy. */
+export function formatClinicShortDate(date: Date): string {
+  return formatInTimeZone(date, CLINIC_TZ, "dd-MM");
+}

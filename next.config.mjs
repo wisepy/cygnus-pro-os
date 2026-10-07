@@ -1,6 +1,3 @@
-import path from "node:path";
-import type { NextConfig } from "next";
-
 const isProd = process.env.NODE_ENV === "production";
 
 // Política de contenido: solo recursos del propio sitio y Google Fonts.
@@ -19,12 +16,10 @@ const csp = [
   "upgrade-insecure-requests",
 ].join("; ");
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
-  turbopack: {
-    root: path.join(__dirname),
-  },
   async headers() {
     return [
       {

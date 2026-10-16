@@ -5,6 +5,11 @@ import mysql, { type Pool, type PoolConnection, type RowDataPacket, type ResultS
  * Pool de conexiones a MySQL (Hostinger). Se reutiliza entre recargas en
  * desarrollo para no abrir conexiones de más.
  * Variable requerida: DATABASE_URL=mysql://usuario:clave@host:3306/nombre_bd
+ *
+ * enableKeepAlive evita que Hostinger (u otro firewall intermedio) cierre
+ * conexiones ociosas del pool en silencio, lo que puede dejar una conexión
+ * "viva" para mysql2 pero en realidad caída, devolviendo resultados
+ * inconsistentes (p. ej. un conteo en 0 mientras otra conexión sí ve los datos).
  */
 declare global {
   // eslint-disable-next-line no-var
@@ -21,6 +26,8 @@ function getPool(): Pool {
       decimalNumbers: true,
       timezone: "Z",
       charset: "utf8mb4",
+      enableKeepAlive: true,
+      keepAliveInitialDelay: 10_000,
     });
   }
   return globalThis.__cygnusPool;
